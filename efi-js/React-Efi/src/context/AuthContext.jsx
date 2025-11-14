@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { loginUser, registerUser } from "../services/api";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -8,17 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
+  // Cuando se inicializa o cambia el token, decodificarlo para setear user
   useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-
         setUser({
-          email: decoded.sub,
-          role: decoded.role,  
+          id: decoded.sub,
+          role: decoded.role,
           exp: decoded.exp,
         });
-
       } catch (error) {
         console.error("Token inválido o expirado", error);
         logout();
@@ -26,34 +25,36 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-
-  const login = async (credentials) => {
+  // Iniciar sesión
+  const login = async ({ token: access_token }) => {
     try {
-      const data = await loginUser(credentials);
+      localStorage.setItem("token", access_token);
+      setToken(access_token);
 
-      localStorage.setItem("token", data.token);
-      setToken(data.token);
-
-      // El backend debe devolver el usuario incluyendo el rol
-      setUser(data.user);
+      const decoded = jwtDecode(access_token);
+      setUser({
+        id: decoded.sub,
+        role: decoded.role,
+        exp: decoded.exp,
+      });
 
       return { success: true };
-
     } catch (error) {
-      return { success: false, message: "Credenciales incorrectas" };
+      console.error("Error en login:", error);
+      return { success: false, message: "Error al procesar token" };
     }
   };
 
-
+  // Registrar usuario
   const register = async (userData) => {
     try {
       await registerUser(userData);
       return { success: true };
     } catch (error) {
+      console.error("Error en registro:", error);
       return { success: false, message: "Error al registrar usuario" };
     }
   };
-
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -71,4 +72,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
