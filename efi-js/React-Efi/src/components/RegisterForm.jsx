@@ -8,10 +8,10 @@ import "../styles/RegisterForm.css";
 
 export default function RegisterForm() {
   const [form, setForm] = useState({
-    nombre: "",
+    username: "",
     email: "",
     password: "",
-    rol: "",
+    role: "",
   });
 
   const handleChange = (e) => {
@@ -31,10 +31,10 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Usuario registrado correctamente");
-        setForm({ nombre: "", email: "", password: "", rol: "" });
+        alert("✅ Usuario registrado correctamente");
+        setForm({ username: "", email: "", password: "", role: "" });
       } else {
-        alert(`Error: ${data.error}`);
+        alert(`❌ Error: ${JSON.stringify(data.errors || data.msg)}`);
       }
     } catch (error) {
       console.error("Error en el registro:", error);
@@ -52,7 +52,7 @@ export default function RegisterForm() {
         <form onSubmit={handleSubmit} className="p-fluid">
           <div className="field mb-3">
             <label>Nombre</label>
-            <InputText name="nombre" value={form.nombre} onChange={handleChange} />
+            <InputText name="username" value={form.username} onChange={handleChange} />
           </div>
 
           <div className="field mb-3">
@@ -74,7 +74,7 @@ export default function RegisterForm() {
 
           <div className="field mb-4">
             <label>Rol</label>
-            <InputText name="rol" value={form.rol} onChange={handleChange} />
+            <InputText name="role" value={form.role} onChange={handleChange} />
           </div>
 
           <Button type="submit" label="Registrarse" className="p-button-success w-full mt-2" />
