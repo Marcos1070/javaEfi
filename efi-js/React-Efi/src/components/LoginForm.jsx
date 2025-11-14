@@ -25,30 +25,34 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
 
-    console.log("Intentando login con:", formData); // 🔹 log de los datos enviados
-
     try {
-      const res = await api.post("/login", formData);
-      console.log("Respuesta del backend:", res.data); // 🔹 log de la respuesta
+      console.log("Intentando login con:", formData);
 
-      const { token, user } = res.data;
-      if (token) {
-        login(token); // ⚡ Guarda el token y el user
-        toast.success("Inicio de sesión exitoso");
-        navigate("/home");
-      } else {
-        toast.error("Login fallido: token no recibido");
+      //Enviamos email y password al backend
+      const res = await api.post("/login", formData);
+      console.log("Respuesta backend:", res.data);
+
+      if (!res.data.token) {
+        toast.error("No se recibió token del servidor");
+        return;
       }
+
+      // Llamamos al login del AuthContext correctamente
+      await login(formData);
+
+      toast.success("Inicio de sesión exitoso");
+
+      navigate("/home"); // o la ruta que corresponda
     } catch (err) {
-      console.error("Error detallado del login:", err.response || err);
+      console.error("Error login:", err);
 
       if (err.response) {
-        // Si el backend respondió con un error
-        const status = err.response.status;
-        const message = err.response.data?.error || "Error desconocido";
-        toast.error(`Error ${status}: ${message}`);
+        toast.error(
+          `Error ${err.response.status}: ${
+            err.response.data.error || "Error desconocido"
+          }`
+        );
       } else {
-        // Error de red o sin respuesta
         toast.error("No se pudo conectar con el servidor");
       }
     } finally {
@@ -108,4 +112,6 @@ export default function LoginForm() {
     </div>
   );
 }
+
+
 

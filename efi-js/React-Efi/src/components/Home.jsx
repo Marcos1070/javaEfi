@@ -1,36 +1,44 @@
-import { useEffect, useState, Fragment } from "react"
-import { Button } from "primereact/button"
-import { useNavigate } from "react-router-dom"
+import { Fragment } from "react";
+import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Home = () => {
-  const navigate = useNavigate()
-  const [alumnos, setAlumnos] = useState([])
-
-  // Llamada a la API Flask
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/alumnos")
-      .then((res) => res.json())
-      .then((data) => setAlumnos(data))
-      .catch((err) => console.error("Error al obtener alumnos:", err))
-  }, [])
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   return (
     <Fragment>
-      <h2>Mi Home</h2>
-      <Button onClick={() => navigate('/tarjeta')} label='Ir al formulario' />
-      <Button onClick={() => navigate('/personas')} label='Ver total de personas' />
+      <h2>Bienvenido/a, {user?.nombre || "Usuario"}</h2>
+      <p>Seleccioná una sección para continuar:</p>
 
-      <h3>Lista de alumnos desde la API</h3>
-      <ul>
-        {alumnos.map((a) => (
-          <li key={a.id}>
-            {a.nombre} — Nota: {a.nota} — Asistencia: {a.asistencia}% — {a.rendimiento}
-          </li>
-        ))}
-      </ul>
+      <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+        <Button 
+          onClick={() => navigate("/posts")}
+          label="Ver Posts"
+          className="p-button-primary"
+        />
+
+        <Button 
+          onClick={() => navigate("/reviews")}
+          label="Ver Reviews"
+          className="p-button-secondary"
+        />
+
+        <Button
+          onClick={logout}
+          label="Cerrar sesión"
+          severity="danger"
+        />
+      </div>
+
+      <h3 style={{ marginTop: "2rem" }}>Información</h3>
+      <p>Usá el menú o los botones para navegar entre Posts, Reviews y otras secciones.</p>
     </Fragment>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
+
+
 

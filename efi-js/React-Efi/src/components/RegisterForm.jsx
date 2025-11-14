@@ -31,10 +31,10 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("✅ Usuario registrado correctamente");
+        alert("Usuario registrado correctamente");
         setForm({ nombre: "", email: "", password: "", rol: "" });
       } else {
-        alert(`❌ Error: ${data.error}`);
+        alert(`Error: ${data.error}`);
       }
     } catch (error) {
       console.error("Error en el registro:", error);
