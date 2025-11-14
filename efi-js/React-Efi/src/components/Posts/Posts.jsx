@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { useAuth } from "../../context/AuthContext.jsx";
 import PostForm from "./PostForm.jsx";
+import { deletePost, getPosts } from "../../services/api.js";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
@@ -10,17 +11,17 @@ export default function Posts() {
   const { token, user } = useAuth();
 
   // Obtener posts
-  const fetchPosts = () => {
-    fetch("http://127.0.0.1:5000/api/posts", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setPosts(data))
-      .catch((error) =>
-        console.error("Error al obtener los posts:", error)
-      );
+  const fetchPosts = async() => {   
+    const postData = await getPosts()
+    const newPosts = postData.map(p => ({
+    id: p.id,
+    titulo: p.title,
+    contenido: p.content,
+    createdAt: p.created_at,
+    autor: p.user_id,  // ⚠️ Ajustar si querés mostrar el nombre del usuario
+  }));
+    
+    setPosts(newPosts)
   };
 
   useEffect(() => {
@@ -45,20 +46,12 @@ export default function Posts() {
     if (!confirm("¿Seguro que querés eliminar este post?")) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/posts/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        setPosts((prev) => prev.filter((p) => p.id !== id));
-      } else {
-        alert("Error al eliminar el post");
-      }
+      await deletePost()
+      
+      setPosts((prev) => prev.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Error:", error);
+         alert("Error al eliminar el post");
     }
   };
 

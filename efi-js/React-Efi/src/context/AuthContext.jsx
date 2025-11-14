@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { loginUser, registerUser } from "../services/api";
-import jwtDecode from "jwt-decode";
+import { loginUser, registerUser, userGet } from "../services/api";
+import {jwtDecode} from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -10,10 +10,15 @@ export const AuthProvider = ({ children }) => {
 
   // Cuando se inicializa o cambia el token, decodificarlo para setear user
   useEffect(() => {
-    if (token) {
+    const getUserData = async () => {
+       if (token) {
       try {
         const decoded = jwtDecode(token);
+
+        const userData = await userGet(decoded.sub)
+
         setUser({
+          nombre: userData.username,
           id: decoded.sub,
           role: decoded.role,
           exp: decoded.exp,
@@ -23,6 +28,9 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
+    }
+
+   getUserData()
   }, [token]);
 
   // Iniciar sesión

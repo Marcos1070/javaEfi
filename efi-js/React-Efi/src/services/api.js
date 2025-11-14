@@ -22,14 +22,7 @@ api.interceptors.request.use((config) => {
 });
 
 
-
-
-
-
 //AUTENTICACION
-
-
-
 export const loginUser = async (credentials) => {
   const { data } = await api.post("/login", credentials);
   return data; // data.token será el JWT
@@ -40,12 +33,15 @@ export const registerUser = async (userData) => {
   return data;
 };
 
+export const userGet = async (id)=>{
+  const {data} = await api.get(`user/${id}`);
+  return data
+}
+
 
 
 
 // Posts crud
-
-
 export const getPosts = async () => {
   const { data } = await api.get("/posts");
   return data;
