@@ -70,23 +70,23 @@ export const deletePost = async (id) => {
 
 
 
-export const getReviews = async () => {
-  const { data } = await api.get("/reviews");
+export const getReviews = async (post_id) => {
+  const {data}= await api.get (`/posts/${post_id}/comments`)
   return data;
 };
 
-export const createReview = async (reviewData) => {
-  const { data } = await api.post("/reviews", reviewData);
+export const createReview = async (comment_id, reviewData) => {
+  const { data } = await api.post(`comments/${comment_id}`, reviewData);
   return data;
 };
 
-export const updateReview = async (id, reviewData) => {
-  const { data } = await api.put(`/reviews/${id}`, reviewData);
+export const updateReview = async (comment_id, reviewData) => {
+  const { data } = await api.put(`comments/${comment_id}`, reviewData);
   return data;
 };
 
-export const deleteReview = async (id) => {
-  const { data } = await api.delete(`/reviews/${id}`);
+export const deleteReview = async (comment_id) => {
+  const { data } = await api.delete(`comments/${comment_id}`);
   return data;
 };
 

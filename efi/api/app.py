@@ -33,6 +33,7 @@ def create_app():
 
     # Comments
     app.add_url_rule("/api/posts/<int:post_id>/comments", view_func=CommentListAPI.as_view("comment_list_api"))
+    app.add_url_rule("/api/comments/<int:comment_id>", view_func=CommentListAPI.as_view("comment_detail_api"))
 
     return app
 

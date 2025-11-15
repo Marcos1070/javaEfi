@@ -3,12 +3,13 @@ import { Button } from "primereact/button";
 import { useAuth } from "../../context/AuthContext.jsx";
 import PostForm from "./PostForm.jsx";
 import { deletePost, getPosts } from "../../services/api.js";
+import PostDetail from "./PostDetail.jsx";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
   const [editingPost, setEditingPost] = useState(null);
 
-  const { token, user } = useAuth();
+  const {  user } = useAuth();
 
   // Obtener posts
   const fetchPosts = async() => {   
@@ -61,7 +62,8 @@ export default function Posts() {
     if (user?.role === "admin") return true;
     return post.autor === user?.id;
   };
-  console.log(editingPost)
+ console.log(posts);
+ console.log(user);
 
   return (
     <div>
@@ -80,38 +82,13 @@ export default function Posts() {
         <p>No hay posts disponibles.</p>
       ) : (
         posts.map((post) => (
-          <div key={post.id} style={{ marginBottom: "1rem" }}>
-            <h3>{post.titulo}</h3>
-            <p>{post.contenido}</p>
-
-            <p>
-              <strong>Autor:</strong> {post.autor}
-            </p>
-
-            <small>
-              Creado: {new Date(post.createdAt).toLocaleString()}
-            </small>
-
-            <div style={{ marginTop: "0.5rem" }}>
-              {puedeModificar(post) && (
-                <>
-                  <Button
-                    label="Editar"
-                    className="p-button-warning mr-2"
-                    onClick={() => setEditingPost(post)}
-                  />
-
-                  <Button
-                    label="Eliminar"
-                    className="p-button-danger ml-2"
-                    onClick={() => handleDelete(post.id)}
-                  />
-                </>
-              )}
-            </div>
-
-            <hr />
-          </div>
+          <PostDetail
+            key={post.id}
+            post={post}
+            puedeModificar={puedeModificar}
+            setEditingPost={setEditingPost}
+            handleDelete={handleDelete}
+          />
         ))
       )}
     </div>
