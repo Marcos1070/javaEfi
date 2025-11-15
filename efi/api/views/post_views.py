@@ -42,10 +42,14 @@ class PostDetailAPI(MethodView):
     def put(self, post_id):
         """Editar un post"""
         post = Post.query.get_or_404(post_id)
-        user_id = int(get_jwt_identity())  
-        if post.user_id != user_id:
-            return {"msg": "No autorizado"}, 403
+        user_id = int(get_jwt_identity())
+        user=User.query.get_or_404(user_id)
+        role=user.role
 
+        if role != "admin":
+            if user_id != post.user_id:
+                return {"msg": "No autorizado"}, 403
+                 
         try:
             data = PostSchema().load(request.get_json(), partial=True)
         except ValidationError as err:
@@ -55,7 +59,7 @@ class PostDetailAPI(MethodView):
             setattr(post, key, value)
 
         db.session.commit()
-        return {"message": "Post actualizado"}, 200
+        return PostSchema().dump(post) , 200
 
 
     @jwt_required()

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
-import { createPost } from "../../services/api";
+import { createPost, updatePost } from "../../services/api";
+
 
 export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) {
   const [titulo, setTitulo] = useState(editingPost?.titulo || "");
@@ -25,17 +26,15 @@ export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) 
 
     // 👉 Si estamos editando
     if (editingPost) {
-      fetch(`http://127.0.0.1:5000/api/posts/${editingPost.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData),
-      })
-        .then((res) => res.json())
-        .then((updated) => {
-          onPostUpdated(updated);
-        })
-        .catch((err) => console.error("Error al actualizar", err));
+      const updateData = await updatePost(editingPost.id, postData)
 
+      onPostUpdated({
+      id: updateData.id,
+      titulo: updateData .title,
+      contenido: updateData.content,
+      createdAt: updateData.created_at,
+      autor: updateData.user_id,  // ⚠️ Ajustar si querés mostrar el nombre del usuario
+    })
       return;
     }
 
