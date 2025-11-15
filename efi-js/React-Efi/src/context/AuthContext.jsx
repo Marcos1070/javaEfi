@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
         setUser({
           nombre: userData.username,
-          id: decoded.sub,
+          id: Number(decoded.sub),
           role: decoded.role,
           exp: decoded.exp,
         });

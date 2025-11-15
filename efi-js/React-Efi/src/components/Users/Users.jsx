@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 const Users = () => {
   const { user } = useAuth();
 
-  if (user.role !== "admin") {
+  if (user?.role !== "admin") {
     return <p>No tenés permisos para ver usuarios.</p>;
   }
 

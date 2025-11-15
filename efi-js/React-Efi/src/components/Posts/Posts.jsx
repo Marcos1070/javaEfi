@@ -46,7 +46,7 @@ export default function Posts() {
     if (!confirm("¿Seguro que querés eliminar este post?")) return;
 
     try {
-      await deletePost()
+      await deletePost(id)
       
       setPosts((prev) => prev.filter((p) => p.id !== id));
     } catch (error) {
@@ -57,8 +57,9 @@ export default function Posts() {
 
   // Verificar si puede editar/eliminar según rol
   const puedeModificar = (post) => {
-    if (user.rol === "admin") return true;
-    return post.autor === user.name;
+    console.log(typeof post.autor, typeof user?.id)
+    if (user?.role === "admin") return true;
+    return post.autor === user?.id;
   };
 
   return (
@@ -101,7 +102,7 @@ export default function Posts() {
 
                   <Button
                     label="Eliminar"
-                    className="p-button-danger"
+                    className="p-button-danger ml-2"
                     onClick={() => handleDelete(post.id)}
                   />
                 </>

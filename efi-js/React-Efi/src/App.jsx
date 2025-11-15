@@ -14,23 +14,24 @@ import { useAuth } from "./context/AuthContext.jsx";
 import "./App.css";
 
 function PrivateRoute({ children }) {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
+  const { token } = useAuth();
+  return token ? children : <Navigate to="/login" />;
 }
 
 export default function App() {
-  const { user } = useAuth();
+  const { token } = useAuth();
 
   return (
     <div className="App">
 
       {/*navbar solo cuando hay usuario logueado */}
-      {user && <Navbar />}
+      {token && <Navbar />}
 
       <Routes>
         {/* Redirección inicial */}
-        <Route path="/" element={<Navigate to="/login" />} />
-
+        
+        {!token && <Route path="/" element={<Navigate to="/login" />} />}
+    
         {/* Públicas */}
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />

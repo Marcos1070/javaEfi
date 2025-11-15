@@ -28,7 +28,7 @@ export default function Navbar() {
   ];
 
   // Si el usuario es admin → agregar item especial
-  if (user?.rol === "admin") {
+  if (user?.role === "admin") {
     items.push({
       label: "Admin Panel",
       icon: "pi pi-shield",

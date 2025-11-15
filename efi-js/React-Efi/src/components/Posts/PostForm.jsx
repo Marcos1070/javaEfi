@@ -2,16 +2,16 @@ import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
+import { createPost } from "../../services/api";
 
 export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) {
   const [titulo, setTitulo] = useState(editingPost?.titulo || "");
   const [contenido, setContenido] = useState(editingPost?.contenido || "");
-  const [autor, setAutor] = useState(editingPost?.autor || "");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const postData = { titulo, contenido, autor };
+    const postData = { title: titulo, content: contenido };
 
     // 👉 Si estamos editando
     if (editingPost) {
@@ -30,19 +30,18 @@ export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) 
     }
 
     // 👉 Si estamos creando uno nuevo
-    fetch("http://127.0.0.1:5000/api/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(postData),
-    })
-      .then((res) => res.json())
-      .then((newPost) => {
-        onPostCreated(newPost);
+
+    const newPost = await createPost(postData)
+    console.log(newPost) // como viene en del servidor
+    onPostCreated({
+      id: newPost.id,
+      titulo: newPost.title,
+      contenido: newPost.content,
+      createdAt: newPost.created_at,
+      autor: newPost.user_id,  // ⚠️ Ajustar si querés mostrar el nombre del usuario
+    });
         setTitulo("");
         setContenido("");
-        setAutor("");
-      })
-      .catch((err) => console.error("Error al crear post", err));
   };
 
   return (
@@ -73,16 +72,7 @@ export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) 
         />
       </div>
 
-      <div className="p-field mt-3">
-        <label>Autor</label>
-        <InputText
-          value={autor}
-          onChange={(e) => setAutor(e.target.value)}
-          required
-          className="w-full"
-        />
-      </div>
-
+      
       <Button
         type="submit"
         label={editingPost ? "Actualizar" : "Crear"}
