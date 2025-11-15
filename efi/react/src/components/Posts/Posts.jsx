@@ -57,10 +57,11 @@ export default function Posts() {
 
   // Verificar si puede editar/eliminar según rol
   const puedeModificar = (post) => {
-    console.log(typeof post.autor, typeof user?.id)
+  
     if (user?.role === "admin") return true;
     return post.autor === user?.id;
   };
+  console.log(editingPost)
 
   return (
     <div>

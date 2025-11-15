@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
@@ -8,6 +8,16 @@ export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) 
   const [titulo, setTitulo] = useState(editingPost?.titulo || "");
   const [contenido, setContenido] = useState(editingPost?.contenido || "");
 
+  console.log(editingPost)
+
+  useEffect(()=>{
+    if (editingPost != null){
+    setContenido(editingPost.contenido)
+    setTitulo(editingPost.titulo)
+   }
+
+  }, [editingPost]
+);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -43,6 +53,7 @@ export default function PostForm({ onPostCreated, onPostUpdated, editingPost }) 
         setTitulo("");
         setContenido("");
   };
+  console.log(titulo, contenido)
 
   return (
     <form
